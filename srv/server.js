@@ -7,9 +7,12 @@ cds.on('bootstrap', (app) => {
 
     const expressApp = express();
     const corsOptions = {
-        origin: '*', 
+        origin: '*',
         optionsSuccessStatus: 200
     };
+       // Middleware for JSON payload limits
+    expressApp.use(express.json({ limit: '50mb' }));
+    expressApp.use(express.urlencoded({ limit: '50mb', extended: true }));
 
     expressApp.use((req, res, next) => {
         console.log("Inside CORS middleware");
