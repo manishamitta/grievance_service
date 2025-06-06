@@ -253,7 +253,7 @@ module.exports = async function () {
         }
 
     })
-     this.on('UPDATE', 'complains', async req => {
+    this.on('UPDATE', 'complains', async req => {
         console.log("req", req)
         var status = req.data.wid;
         console.log("status", status);
@@ -285,25 +285,30 @@ module.exports = async function () {
             console.log("subp", subp)
             var subid = subp.data[0].id;
             console.log("subid", subid);
-
-
-
+            
+            var bodyy = {
+                "status": "CANCELED",
+                "cascade": true
+            };
+            console.log("bodyy", bodyy);
+            var cancelsubp = await axios.request(`https://spa-api-gateway-bpi-us-prod.cfapps.us10.hana.ondemand.com/workflow/rest/v1/workflow-instances/${subid}`,
+                {
+                    method: 'PATCH',
+                    headers: {
+                        'Authorization': 'Bearer ' + response1.data.access_token,
+                    },
+                    data: bodyy
+                });
+            console.log("cancelsubp", cancelsubp)
         }
-        var bodyy = {
-            "status": "CANCELED",
-            "cascade": true
-        };
-        console.log("bodyy", bodyy);
-        var cancelsubp = await axios.request(`https://spa-api-gateway-bpi-us-prod.cfapps.us10.hana.ondemand.com/workflow/rest/v1/workflow-instances/${subid}`,
-            {
-                method: 'PATCH',
-                headers: {
-                    'Authorization': 'Bearer ' + response1.data.access_token,
-                },
-                data: bodyy
-            });
-        console.log("cancelsubp", cancelsubp)
 
+        else if (status == 'react') {
+            // console.log('params' , req.params)
+            // const { complainno } = req.params[0];
+            // console.log('Complain No:', complainno);
+            var cstatus1 = req.data.cstatus;
+            await UPDATE(complains).set({ cstatus: cstatus1 }).where({ complainno: comp });
+        }
     });
 
     this.on('triggerProcess', async (req) => {
